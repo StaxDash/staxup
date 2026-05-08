@@ -58,7 +58,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.bin_name }}
+          name: ${{ matrix.bin_name }}-artifact
           path: artifacts/${{ matrix.bin_name }}
 
   release:
