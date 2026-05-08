@@ -72,15 +72,21 @@ jobs:
         with:
           path: dist
 
+      - name: Debug artifact structure
+        run: |
+          echo "Listing dist directory:"
+          ls -R dist
+
       - name: Flatten artifacts
         run: |
           cd dist
-          find . -type f -maxdepth 2 -exec mv {} . \;
+          find . -type f -exec mv {} . \;
           find . -mindepth 1 -type d -exec rm -r {} +
 
       - name: Generate checksums
         run: |
           cd dist
+          ls -l
           sha256sum * > checksums.txt
 
       - name: Create GitHub Release
