@@ -53,8 +53,9 @@ staxup is distributed as a standalone binary and as a Rust crate.
 
 ### As a CLI tool
 ```
-staxup update staxping
-staxup update --all
+staxup update <tool>
+staxup check <tool>
+staxup rollback <tool>
 ```
 
 ### As a Rust library
@@ -63,7 +64,8 @@ use stax_up::Updater;
 
 fn main() -> anyhow::Result<()> {
     Updater::new("staxping")
-        .with_manifest("staxping.toml")
+        .with_manifest_path("staxping.toml")
+        .with_remote_manifest("https://example.com/staxping.toml")
         .check_and_apply()?;
 
     Ok(())
@@ -117,11 +119,20 @@ staxup reads this file to determine how to update the tool.
 ## 🔧 CLI Usage
 
 ```
-staxup check <tool>
-staxup update <tool>
-staxup update --all
-staxup rollback <tool>
+staxup check <tool>     # Show current version and info
+staxup update <tool>    # Update to latest version
+staxup rollback <tool>  # Rollback to previous version
 ```
+
+---
+
+## 🏗 Building
+
+```bash
+cargo build --release
+```
+
+The binary will be in `target/release/staxup`.
 
 ---
 
@@ -154,11 +165,11 @@ independent CLI tools that want a clean, reliable update story.
 
 ## 🛠 Roadmap
 
-- [ ] Initial crate + CLI scaffolding  
-- [ ] Manifest parser  
-- [ ] Version comparison  
-- [ ] Download + checksum verification  
-- [ ] Install + rollback logic  
+- [x] Initial crate + CLI scaffolding  
+- [x] Manifest parser  
+- [x] Version comparison  
+- [x] Download + checksum verification  
+- [x] Install + rollback logic  
 - [ ] Self‑update support  
 - [ ] Global registry integration  
 - [ ] StaxDash GUI integration  

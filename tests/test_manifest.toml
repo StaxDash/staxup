@@ -1,0 +1,14 @@
+version = "1.0.0"
+channel = "stable"
+
+[downloads]
+linux_amd64 = "https://example.com/tool-linux-amd64"
+windows_x64 = "https://example.com/tool-windows-x64.exe"
+
+[checksums]
+linux_amd64 = "sha256-abc123"
+windows_x64 = "sha256-def456"
+
+[meta]
+name = "TestTool"
+description = "A test tool"

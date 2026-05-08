@@ -1,0 +1,79 @@
+name: Build and Release StaxUp
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build for ${{ matrix.os }} (${{ matrix.target }})
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            bin_name: staxup-linux-amd64
+          - os: ubuntu-latest
+            target: aarch64-unknown-linux-gnu
+            bin_name: staxup-linux-arm64
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+            bin_name: staxup-windows-x64.exe
+          - os: macos-latest
+            target: aarch64-apple-darwin
+            bin_name: staxup-macos-arm64
+          - os: macos-latest
+            target: x86_64-apple-darwin
+            bin_name: staxup-macos-x64
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Rust target
+        run: rustup target add ${{ matrix.target }}
+
+      - name: Build
+        run: cargo build --release --target ${{ matrix.target }}
+
+      - name: Rename binary
+        run: |
+          mkdir artifacts
+          if [[ "${{ matrix.os }}" == "windows-latest" ]]; then
+            cp target/${{ matrix.target }}/release/staxup.exe artifacts/${{ matrix.bin_name }}
+          else
+            cp target/${{ matrix.target }}/release/staxup artifacts/${{ matrix.bin_name }}
+          fi
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.bin_name }}
+          path: artifacts/${{ matrix.bin_name }}
+
+  release:
+    name: Create Release
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: dist
+
+      - name: Generate checksums
+        run: |
+          cd dist
+          sha256sum * > checksums.txt
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

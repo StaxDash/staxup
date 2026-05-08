@@ -1,0 +1,25 @@
+[package]
+name = "stax_up"
+version = "0.1.0"
+edition = "2021"
+license = "Apache-2.0"
+description = "Cross-platform binary updater and version manager for CLI tools."
+
+[lib]
+name = "stax_up"
+path = "src/lib.rs"
+
+[[bin]]
+name = "staxup"
+path = "src/cli.rs"
+
+[dependencies]
+serde = { version = "1", features = ["derive"] }
+toml = "0.8"
+reqwest = { version = "0.12", features = ["blocking", "rustls-tls"] }
+sha2 = "0.10"
+anyhow = "1"
+thiserror = "1"
+semver = "1"
+dirs = "5"
+tempfile = "3"
