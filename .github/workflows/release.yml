@@ -72,6 +72,12 @@ jobs:
         with:
           path: dist
 
+      - name: Flatten artifacts
+        run: |
+          cd dist
+          find . -type f -maxdepth 2 -exec mv {} . \;
+          find . -mindepth 1 -type d -exec rm -r {} +
+
       - name: Generate checksums
         run: |
           cd dist
